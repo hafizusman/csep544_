@@ -27,10 +27,10 @@ WHERE A.id=C1.pid AND C1.mid=M1.id
 	AND A.id=C2.pid AND C2.mid=M2.id
 	AND M1.year < 1900 AND M2.year > 2000;
 --- Returns 48 rows
---- I ran the following query to see that the these actors are actually famous people 
---- (usually) that have been shown in documentaries (or other non-fiction genres) as 
---- themselves hence a new movie id is created for them even though they're not 
---- neccessarily acting in them
+--- I ran the following query to see that these actors are actually famous people 
+--- (usually) that have been shown up in documentaries (or other non-fiction genres) as 
+--- themselves hence a new movie id is created for the movie even though they're not 
+--- neccessarily acting in them alive
 
 -- QUERY to see that same actor acting in movies more than 100 years apart are actually documentaries/news/shorts of themselves
 SELECT A.id, M.id, M.name, M.year, G.genre, C.role
