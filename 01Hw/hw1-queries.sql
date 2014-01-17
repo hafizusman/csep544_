@@ -42,12 +42,12 @@ WHERE A.id=C.pid AND C.mid=M.id
 ----------------------------
 --- Q C4
 ----------------------------
-SELECT D.id, D.fname, D.lname, count(*) AS mcount
-FROM DIRECTORS AS D, MOVIE_DIRECTORS AS MD, MOVIE AS M
-WHERE D.id=MD.did
-	AND MD.mid=M.id
-GROUP BY D.id
-HAVING COUNT (*) > 500
+SELECT D.fname, D.lname, count(*) AS mcount
+FROM DIRECTORS AS D, MOVIE_DIRECTORS AS MD, MOVIE AS M
+WHERE D.id=MD.did
+	AND MD.mid=M.id
+GROUP BY D.fname, D.lname
+HAVING COUNT (*) > 500
 ORDER BY mcount DESC;
 --- Returns 47 rows
 
