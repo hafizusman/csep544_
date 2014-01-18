@@ -55,4 +55,16 @@ ORDER BY mcount DESC;
 ----------------------------
 --- Q C5
 ----------------------------
+SELECT A.fname, A.lname, M.name, COUNT(*) AS numroles
+FROM ACTOR AS A
+INNER JOIN CASTS AS C ON A.id=C.pid
+INNER JOIN MOVIE AS M ON M.id=C.mid
+WHERE M.year=2010
+GROUP BY A.fname, A.lname, M.name
+HAVING COUNT(*) > 4;
+--- Returns 24 rows
 
+
+----------------------------
+--- Q C6
+----------------------------
