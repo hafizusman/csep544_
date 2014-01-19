@@ -68,7 +68,18 @@ HAVING COUNT(DISTINCT C.role) > 4;
 ----------------------------
 --- Q C6
 ----------------------------
-
+SELECT actorid, moviename, C1.role
+FROM	(
+	SELECT A.id AS actorid, C.mid AS movieid, M.name AS moviename, COUNT(DISTINCT C.role) AS numroles
+	FROM ACTOR AS A
+	INNER JOIN CASTS AS C ON A.id=C.pid
+	INNER JOIN MOVIE AS M ON M.id=C.mid
+	WHERE M.year=2010
+	GROUP BY A.id, C.mid, M.name
+	HAVING COUNT(DISTINCT C.role) > 4
+	) AS Temp
+INNER JOIN CASTS C1 ON Temp.actorid=C1.pid AND Temp.movieid=C1.mid;
+--- Returns 137 rows
 
 ----------------------------
 --- Q C9
