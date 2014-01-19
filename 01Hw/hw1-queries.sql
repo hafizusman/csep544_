@@ -89,12 +89,15 @@ INNER JOIN CASTS C1 ON Temp.actorid=C1.pid AND Temp.movieid=C1.mid;
 
 SELECT M.year, COUNT(*)
 FROM MOVIE AS M
-INNER JOIN CASTS C ON M.id=C.mid
-INNER JOIN ACTOR A ON A.id=C.pid
-WHERE A.gender!='M'
-GROUP BY M.year
-ORDER BY M.year;
---- Returns 124 rows
+WHERE NOT EXISTS
+	(
+	SELECT A.id
+	FROM ACTOR AS A
+	INNER JOIN CASTS AS C ON A.id=C.pid
+	WHERE M.id=C.mid AND A.gender!='F'
+	)
+GROUP BY M.year;
+--- Returns 129 rows
 
 
 ----------------------------
