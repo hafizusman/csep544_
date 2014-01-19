@@ -81,6 +81,21 @@ FROM	(
 INNER JOIN CASTS C1 ON Temp.actorid=C1.pid AND Temp.movieid=C1.mid;
 --- Returns 137 rows
 
+
+----------------------------
+--- Q C7
+----------------------------
+SELECT M.year, COUNT(*)
+FROM MOVIE AS M
+INNER JOIN CASTS C ON M.id=C.mid
+INNER JOIN ACTOR A ON A.id=C.pid
+WHERE A.gender!='M'
+GROUP BY M.year
+ORDER BY M.year;
+--- Returns 124 rows
+
+
+
 ----------------------------
 --- Q C9
 ----------------------------
