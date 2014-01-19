@@ -1,8 +1,8 @@
 ----------------------------
 --- Q C1
 ----------------------------
-SELECT A.fname, A.lname
-FROM ACTOR AS A, MOVIE AS M, CASTS AS C
+SELECT A.fname, A.lname
+FROM ACTOR AS A, MOVIE AS M, CASTS AS C
 WHERE A.id=C.pid AND M.id=C.mid AND M.name='Officer 444';
 --- Returns 13 rows
 
@@ -32,7 +32,8 @@ WHERE A.id=C1.pid AND C1.mid=M1.id
 --- themselves hence a new movie id is created for the movie even though they're not 
 --- neccessarily acting in them alive
 
--- QUERY to see that same actor acting in movies more than 100 years apart are actually documentaries/news/shorts of themselves
+-- QUERY to see that same actor acting in movies more than 100 years apart are actually 
+-- documentaries/news/shorts of themselves
 SELECT A.id, M.id, M.name, M.year, G.genre, C.role
 FROM ACTOR AS A, CASTS AS C, MOVIE AS M, GENRE AS G
 WHERE A.id=C.pid AND C.mid=M.id
@@ -42,12 +43,12 @@ WHERE A.id=C.pid AND C.mid=M.id
 ----------------------------
 --- Q C4
 ----------------------------
-SELECT D.fname, D.lname, count(*) AS mcount
-FROM DIRECTORS AS D, MOVIE_DIRECTORS AS MD, MOVIE AS M
-WHERE D.id=MD.did
-	AND MD.mid=M.id
-GROUP BY D.fname, D.lname
-HAVING COUNT (*) > 500
+SELECT D.fname, D.lname, count(*) AS mcount
+FROM DIRECTORS AS D, MOVIE_DIRECTORS AS MD, MOVIE AS M
+WHERE D.id=MD.did
+	AND MD.mid=M.id
+GROUP BY D.fname, D.lname
+HAVING COUNT (*) > 500
 ORDER BY mcount DESC;
 --- Returns 47 rows
 
@@ -85,6 +86,7 @@ INNER JOIN CASTS C1 ON Temp.actorid=C1.pid AND Temp.movieid=C1.mid;
 ----------------------------
 --- Q C7
 ----------------------------
+
 SELECT M.year, COUNT(*)
 FROM MOVIE AS M
 INNER JOIN CASTS C ON M.id=C.mid
@@ -94,6 +96,10 @@ GROUP BY M.year
 ORDER BY M.year;
 --- Returns 124 rows
 
+
+----------------------------
+--- Q C8
+----------------------------
 
 
 ----------------------------
@@ -118,3 +124,12 @@ WHERE Temp.castcount =
 		GROUP BY mid
 		) AS CC
 	);
+
+
+----------------------------
+--- Q C10
+----------------------------
+
+----------------------------
+--- Q C11
+----------------------------
