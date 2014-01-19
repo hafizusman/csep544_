@@ -103,7 +103,28 @@ GROUP BY M.year;
 ----------------------------
 --- Q C8
 ----------------------------
-
+SELECT Temp1.movieyear1, ((Temp1.female_actor_movies*100.0)/Temp2.total_movie_count) AS percentage, Temp2.total_movie_count
+FROM 	(
+	SELECT M.year AS movieyear1, COUNT(*) AS female_actor_movies
+	FROM MOVIE AS M
+	WHERE NOT EXISTS
+		(
+		SELECT A.id
+		FROM ACTOR AS A
+		INNER JOIN CASTS AS C ON A.id=C.pid
+		WHERE M.id=C.mid AND A.gender!='F'
+		)
+	GROUP BY M.year
+	) AS Temp1
+INNER JOIN
+	(
+	SELECT M.year AS movieyear2, COUNT(*) AS total_movie_count
+	FROM MOVIE AS M
+	GROUP BY M.year
+	) AS Temp2
+	ON Temp1.movieyear1=Temp2.movieyear2
+ORDER BY Temp1.movieyear1;
+--- Returns 128 rows
 
 ----------------------------
 --- Q C9
