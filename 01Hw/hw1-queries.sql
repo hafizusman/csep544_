@@ -68,3 +68,27 @@ HAVING COUNT(*) > 4;
 ----------------------------
 --- Q C6
 ----------------------------
+
+
+----------------------------
+--- Q C9
+----------------------------
+
+SELECT Temp.moviename, Temp.castcount
+FROM
+	(
+	SELECT C.mid AS movieid, M.name AS moviename, COUNT(DISTINCT C.pid) AS castcount
+	FROM CASTS AS C
+	INNER JOIN MOVIE AS M ON C.mid=M.id
+	GROUP BY C.mid, M.name
+	) AS Temp
+WHERE Temp.castcount = 
+	(
+	SELECT MAX(CC.castcount2) 
+	FROM 
+		(
+		SELECT COUNT(DISTINCT pid) AS castcount2
+		FROM CASTS
+		GROUP BY mid
+		) AS CC
+	);
