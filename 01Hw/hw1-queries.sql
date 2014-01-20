@@ -1,4 +1,4 @@
-----------------------------
+﻿----------------------------
 --- Q C1
 ----------------------------
 SELECT A.fname, A.lname
@@ -157,3 +157,18 @@ WHERE Temp.castcount =
 ----------------------------
 --- Q C11
 ----------------------------
+select count(*)
+from
+(
+select a3.fname, a3.lname 
+from Actor a0, Casts c0, Casts c1, Casts c2, Casts c3, Actor a3
+where a0.fname = 'Kevin' and a0.lname = 'Bacon'
+     and c0.pid = a0.id and c0.mid = c1.mid and c1.pid = c2.pid and c2.mid = c3.mid and c3.pid = a3.id
+and not (a3.fname = 'Kevin' and a3.lname = 'Bacon')
+and not
+ exists(select xc1.pid from Actor xa0, Casts xc0, Casts xc1
+    where xa0.fname = 'Kevin' and xa0.lname = 'Bacon'
+    and xa0.id = xc0.pid and xc0.mid = xc1.mid and xc1.pid = a3.id)
+group by a3.id, a3.fname, a3.lname
+) AS k
+;
