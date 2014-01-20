@@ -153,6 +153,51 @@ WHERE Temp.castcount =
 ----------------------------
 --- Q C10
 ----------------------------
+SELECT startyear, decadecount
+FROM
+	(
+	SELECT startyear, SUM(yearlycount) AS decadecount
+	FROM
+		(
+		SELECT Temp.num AS startyear, T2.num, C.count AS yearlycount
+		FROM Temp
+		CROSS JOIN Temp T1
+		CROSS JOIN Temp T2
+		INNER JOIN counts C ON T2.num=C.num
+		WHERE 	(T2.num=Temp.num+0
+			OR T2.num=Temp.num+1
+			OR T2.num=Temp.num+2)
+			AND Temp.num <= (SELECT MAX(Temp.num)-2 FROM Temp)
+		GROUP BY Temp.num, T2.num, C.count
+		ORDER BY Temp.num, T2.num
+		) AS xyz
+	GROUP BY startyear
+	) AS abc2
+WHERE decadecount=
+	(
+	SELECT MAX(decadecount) 
+	FROM
+		(
+		SELECT startyear, SUM(yearlycount) AS decadecount
+		FROM
+			(
+			SELECT Temp.num AS startyear, T2.num, C.count AS yearlycount
+			FROM Temp
+			CROSS JOIN Temp T1
+			CROSS JOIN Temp T2
+			INNER JOIN counts C ON T2.num=C.num
+			WHERE 	(T2.num=Temp.num+0
+				OR T2.num=Temp.num+1
+				OR T2.num=Temp.num+2)
+				AND Temp.num <= (SELECT MAX(Temp.num)-2 FROM Temp)
+			GROUP BY Temp.num, T2.num, C.count
+			ORDER BY Temp.num, T2.num
+			) AS xyz
+		GROUP BY startyear
+		) AS abc2
+	)
+;
+
 
 ----------------------------
 --- Q C11
