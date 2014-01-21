@@ -47,8 +47,7 @@ WHERE A.id=C.pid AND C.mid=M.id
 ----------------------------
 SELECT D.fname, D.lname, count(*) AS mcount
 FROM DIRECTORS AS D, MOVIE_DIRECTORS AS MD, MOVIE AS M
-WHERE D.id=MD.did
-	AND MD.mid=M.id
+WHERE D.id=MD.did AND MD.mid=M.id
 GROUP BY D.fname, D.lname
 HAVING COUNT (*) > 500
 ORDER BY mcount DESC;
