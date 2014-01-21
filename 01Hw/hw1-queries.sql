@@ -18,6 +18,7 @@ WHERE G.genre='Film-Noir'
 	AND (M.year%4)=0;
 --- Returns 113 rows
 
+
 ----------------------------
 --- Q C3
 ----------------------------
@@ -39,6 +40,7 @@ FROM ACTOR AS A, CASTS AS C, MOVIE AS M, GENRE AS G
 WHERE A.id=C.pid AND C.mid=M.id
 	AND A.fname='Christian IX'
 	AND M.id = G.mid;
+
 
 ----------------------------
 --- Q C4
@@ -86,7 +88,6 @@ INNER JOIN CASTS C1 ON Temp.actorid=C1.pid AND Temp.movieid=C1.mid;
 ----------------------------
 --- Q C7
 ----------------------------
-
 SELECT M.year, COUNT(*)
 FROM MOVIE AS M
 WHERE NOT EXISTS
@@ -126,13 +127,12 @@ INNER JOIN
 ORDER BY Temp1.movieyear1;
 --- Returns 128 rows
 
+
 ----------------------------
 --- Q C9
 ----------------------------
-
 SELECT Temp.moviename, Temp.castcount
-FROM
-	(
+FROM	(
 	SELECT C.mid AS movieid, M.name AS moviename, COUNT(DISTINCT C.pid) AS castcount
 	FROM CASTS AS C
 	INNER JOIN MOVIE AS M ON C.mid=M.id
@@ -148,72 +148,64 @@ WHERE Temp.castcount =
 		GROUP BY mid
 		) AS CC
 	);
+--- Returns 1 row: "Around the World in Eighty Days";1298
 
 
 ----------------------------
 --- Q C10
 ----------------------------
-SELECT startyear, decadecount
-FROM
-	(
-	SELECT startyear, SUM(yearlycount) AS decadecount
-	FROM
+SELECT decadestartingyear, MAX(movies) AS moviesindecade
+FROM	(
+	SELECT yearlist.year AS decadestartingyear, SUM(yearcount.count_) AS movies
+	FROM 	(
+		SELECT DISTINCT year 
+		FROM MOVIE
+		) AS yearlist,   
 		(
-		SELECT Temp.num AS startyear, T2.num, C.count AS yearlycount
-		FROM Temp
-		CROSS JOIN Temp T1
-		CROSS JOIN Temp T2
-		INNER JOIN counts C ON T2.num=C.num
-		WHERE 	(T2.num=Temp.num+0
-			OR T2.num=Temp.num+1
-			OR T2.num=Temp.num+2)
-			AND Temp.num <= (SELECT MAX(Temp.num)-2 FROM Temp)
-		GROUP BY Temp.num, T2.num, C.count
-		ORDER BY Temp.num, T2.num
-		) AS xyz
-	GROUP BY startyear
-	) AS abc2
-WHERE decadecount=
-	(
-	SELECT MAX(decadecount) 
-	FROM
-		(
-		SELECT startyear, SUM(yearlycount) AS decadecount
-		FROM
-			(
-			SELECT Temp.num AS startyear, T2.num, C.count AS yearlycount
-			FROM Temp
-			CROSS JOIN Temp T1
-			CROSS JOIN Temp T2
-			INNER JOIN counts C ON T2.num=C.num
-			WHERE 	(T2.num=Temp.num+0
-				OR T2.num=Temp.num+1
-				OR T2.num=Temp.num+2)
-				AND Temp.num <= (SELECT MAX(Temp.num)-2 FROM Temp)
-			GROUP BY Temp.num, T2.num, C.count
-			ORDER BY Temp.num, T2.num
-			) AS xyz
-		GROUP BY startyear
-		) AS abc2
-	)
-;
+		SELECT year, COUNT(*) AS count_ 
+		FROM MOVIE 
+		GROUP BY year
+		) AS yearcount
+	WHERE yearcount.year >= yearlist.year AND yearcount.year < (yearlist.year + 10)
+	GROUP BY yearlist.year
+	ORDER BY SUM (yearcount.count_) DESC
+	) AS Temp
+WHERE	movies =(
+		SELECT MAX (movies1)
+		FROM	(
+			SELECT yearlist.year AS decade, SUM(yearcount.count_) AS movies1
+			FROM 	(
+				SELECT DISTINCT year 
+				FROM MOVIE
+				) AS yearlist,   
+				(
+				SELECT year, COUNT(*) AS count_ 
+				FROM MOVIE 
+				GROUP BY year
+				) AS yearcount
+			WHERE yearcount.year >= yearlist.year AND yearcount.year < (yearlist.year + 10)
+			GROUP BY yearlist.year
+			ORDER BY SUM (yearcount.count_) DESC
+			) AS Temp2
+		)
+GROUP BY decadestartingyear;
+-- Returns 1 row: 2000;457481
 
 
 ----------------------------
 --- Q C11
 ----------------------------
-select count(*)
-from
-(
-select a3.fname, a3.lname 
-from Actor a0, Casts c0, Casts c1, Casts c2, Casts c3, Actor a3
-where a0.fname = 'Kevin' and a0.lname = 'Bacon'
-     and c0.pid = a0.id and c0.mid = c1.mid and c1.pid = c2.pid and c2.mid = c3.mid and c3.pid = a3.id
-and not (a3.fname = 'Kevin' and a3.lname = 'Bacon')
-and not
- exists(select xc1.pid from Actor xa0, Casts xc0, Casts xc1
-    where xa0.fname = 'Kevin' and xa0.lname = 'Bacon'
-    and xa0.id = xc0.pid and xc0.mid = xc1.mid and xc1.pid = a3.id)
-group by a3.id, a3.fname, a3.lname
-) AS k
-;
+SELECT COUNT(*)
+FROM	(
+	SELECT a3.fname, a3.lname 
+	from Actor a0, Casts c0, Casts c1, Casts c2, Casts c3, Actor a3
+	where a0.fname = 'Kevin' and a0.lname = 'Bacon'
+	     and c0.pid = a0.id and c0.mid = c1.mid and c1.pid = c2.pid and c2.mid = c3.mid and c3.pid = a3.id
+	and not (a3.fname = 'Kevin' and a3.lname = 'Bacon')
+	and not
+	 exists(select xc1.pid from Actor xa0, Casts xc0, Casts xc1
+	    where xa0.fname = 'Kevin' and xa0.lname = 'Bacon'
+	    and xa0.id = xc0.pid and xc0.mid = xc1.mid and xc1.pid = a3.id)
+	group by a3.id, a3.fname, a3.lname
+	) AS k;
+-- Returns 1 row: 521870
