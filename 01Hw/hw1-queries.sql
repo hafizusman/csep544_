@@ -197,15 +197,21 @@ GROUP BY decadestartingyear;
 ----------------------------
 SELECT COUNT(*)
 FROM	(
-	SELECT a3.fname, a3.lname 
-	from Actor a0, Casts c0, Casts c1, Casts c2, Casts c3, Actor a3
-	where a0.fname = 'Kevin' and a0.lname = 'Bacon'
-	     and c0.pid = a0.id and c0.mid = c1.mid and c1.pid = c2.pid and c2.mid = c3.mid and c3.pid = a3.id
-	and not (a3.fname = 'Kevin' and a3.lname = 'Bacon')
-	and not
-	 exists(select xc1.pid from Actor xa0, Casts xc0, Casts xc1
-	    where xa0.fname = 'Kevin' and xa0.lname = 'Bacon'
-	    and xa0.id = xc0.pid and xc0.mid = xc1.mid and xc1.pid = a3.id)
-	group by a3.id, a3.fname, a3.lname
+	SELECT A3.fname, A3.lname 
+	FROM ACTOR AS A0, CASTS C0, CASTS C1, CASTS C2, CASTS C3, ACTOR A3
+	WHERE 	A0.fname = 'Kevin' AND A0.lname = 'Bacon'
+		AND C0.pid = A0.id AND C0.mid = C1.mid 
+		AND C1.pid = C2.pid AND C2.mid = C3.mid 
+		AND C3.pid = A3.id
+		AND NOT (A3.fname = 'Kevin' AND A3.lname = 'Bacon')
+		AND NOT	EXISTS
+			(
+			SELECT C1_.pid 
+			FROM ACTOR AS A0_, CASTS AS C0_, CASTS AS C1_
+			WHERE 	A0_.fname = 'Kevin' AND A0_.lname = 'Bacon'
+				AND A0_.id = C0_.pid AND C0_.mid = C1_.mid 
+				AND C1_.pid = A3.id
+			)
+	GROUP BY A3.id, A3.fname, A3.lname
 	) AS k;
 -- Returns 1 row: 521870
